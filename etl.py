@@ -169,7 +169,6 @@ def load_stage(track_list, artists, albums, tracks, tracks_f):
     metadata = MetaData(schema="stage")
     try:
         with pg.connect(host=getenv('HOST'), dbname=getenv('DB'), user=getenv('USER'), password=getenv('PW')) as conn:
-            log.info("Conexão aberta")
             engine = create_engine('postgresql+psycopg2://', creator=lambda: conn)
             track_list.to_sql('stg_fato', con=engine, if_exists='replace', index=False, schema=metadata.schema)
             artists.to_sql('stg_dim_artist', con=engine, if_exists='replace', index=False, schema=metadata.schema)
@@ -184,23 +183,19 @@ def load_stage(track_list, artists, albums, tracks, tracks_f):
     except Exception as e:
         log.error("Ocorreu um erro durante a execução a carga: %s", str(e))
         flag = False
-    finally:
-        log.info("Conexão fechada")
     return flag
 
 
-def upsert_dbo():
+def upsert_dw():
     with pg.connect(host=getenv('HOST'), dbname=getenv('DB'), user=getenv('USER'), password=getenv('PW')) as conn:
-        log.info("Conexão aberta")
         try:
             with conn.cursor() as cursor:
-                cursor.execute("CALL dbo.upsert_dims()")
-                cursor.execute("CALL dbo.insert_fato()")
+                cursor.execute("CALL dw.upsert_dims()")
+                cursor.execute("CALL dw.insert_fato()")
             conn.commit()
+            log.info("Procedures executadas com sucesso")
         except pg.Error as e:
             log.error(f"Erro ao executar a procedure: {e}")
-        log.info("Conexão fechada")
-
 
 def etl(hours: int):
     # Extrai tracks recentes
@@ -226,13 +221,13 @@ def etl(hours: int):
 
     # Após extraídos os dados, são armazenados em uma stage
     # recents_tracks corresponderá a fato, com a data em que foi escutada a música, permitindo tracks repetidas
-    log.info("Loading to database...")
-    # flag_to_upsert = load_stage(recent_tracks_fact, artists_data, albums_data, tracks_data, tracks_features_data)
+    log.info("Loading stage...")
+    flag_to_upsert = load_stage(recent_tracks_fact, artists_data, albums_data, tracks_data, tracks_features_data)
 
     # Chamada de procedures no banco para fazer upserts no DW, caso a stage tenha sido atualizada
-    # if flag_to_upsert:
-    #     log.info("Updating dbo...")
-    #     upsert_dbo()
+    if flag_to_upsert:
+        log.info("Updating dw...")
+        upsert_dw()
 
 
 if __name__ == '__main__':
@@ -243,5 +238,5 @@ if __name__ == '__main__':
         datefmt='%Y-%m-%d %H:%M:%S',
         handlers=[log.FileHandler('etl_logs.log')]
     )
-    backward_hours = int(argv[1]) if len(argv) > 1 else 12
+    backward_hours = int(argv[1]) if len(argv) > 1 else 3
     etl(backward_hours)
