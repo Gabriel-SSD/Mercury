@@ -47,6 +47,17 @@ CREATE TABLE dbo.dim_track (
 	track_number int4 NULL,
 	data_carga date NULL,
 	data_atualizacao date NULL,
+	acousticness float8 NULL,
+	danceability float8 NULL,
+	energy float8 NULL,
+	instrumentalness float8 NULL,
+	"key" int8 NULL,
+	liveness float8 NULL,
+	"mode" int8 NULL,
+	speechiness float8 NULL,
+	tempo float8 NULL,
+	time_signature int8 NULL,
+	valence float8 NULL,
 	CONSTRAINT dim_track_sk PRIMARY KEY (sk_track),
 	CONSTRAINT dim_track_un UNIQUE (id)
 );

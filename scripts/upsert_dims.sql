@@ -25,7 +25,23 @@ BEGIN
 	ON CONFLICT (id) DO UPDATE
 	SET popularity = EXCLUDED.popularity, data_atualizacao = current_date
 	WHERE dbo.dim_track.popularity <> EXCLUDED.popularity;
-	
+
+	-- Update dim_track com track_features
+	UPDATE dbo.dim_track SET
+	acousticness = tf.acousticness,
+	danceability = tf.danceability,
+	energy = tf.energy,
+	instrumentalness = tf.instrumentalness,
+	"key" = tf."key",
+	liveness = tf.liveness,
+	"mode" = tf."mode",
+	speechiness = tf.speechiness,
+	tempo = tf.tempo,
+	time_signature = tf.time_signature,
+	valence = tf.valence
+	FROM stage.stg_track_features tf
+	WHERE dbo.dim_track.id = tf.track_id and dbo.dim_track.energy is null;
+
 END;
 $procedure$
 ;
