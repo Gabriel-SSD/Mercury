@@ -1,4 +1,4 @@
-from etl import pd, pg, MetaData, date, create_engine, getenv
+from etl import pd, pg, MetaData, date, create_engine, getenv, load_env
 import holidays
 
 
@@ -13,9 +13,10 @@ def load_dim_hora():
     return dim_hora
 
 
+# 2023-07-11 data inicial
 def load_dim_data():
-    datas = pd.date_range(start='2023-07-11', end='2023-12-31')
-    feriados = holidays.country_holidays(country='BR', state='RJ', years=2023)
+    datas = pd.date_range(start='2021-01-01', end='2021-12-31')
+    feriados = holidays.country_holidays(country='BR', state='RJ', years=2022)
     dim_data = pd.DataFrame({'date': datas,
                              'year': datas.year,
                              'month': datas.month,
@@ -37,4 +38,5 @@ def load_dim_tempo_stage(dim_data, dim_hora):
         dim_hora.to_sql('stg_dim_hora', con=engine, if_exists='replace', index=False, schema=metadata.schema)
 
 
+load_env()
 load_dim_tempo_stage(load_dim_data(), load_dim_hora())
