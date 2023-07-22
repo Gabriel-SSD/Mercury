@@ -153,7 +153,6 @@ def get_tracks_features(ids):
         return pd.DataFrame(features_data)
     except(spotipy.SpotifyException, spotipy.SpotifyOauthError, Exception) as e:
         log.error(f"Erro durante o processamento das features: {str(e)}")
-        exit(-1)
 
 
 def load_stage(track_list, artists, albums, tracks, tracks_f):
@@ -176,14 +175,10 @@ def load_stage(track_list, artists, albums, tracks, tracks_f):
             tracks.to_sql('stg_dim_track', con=engine, if_exists='replace', index=False, schema=metadata.schema)
             tracks_f.to_sql('stg_track_features', con=engine, if_exists='replace', index=False, schema=metadata.schema)
             log.info("Carga na stage bem sucedida")
-            flag = True
-    except pg.Error as e:
-        log.error("Ocorreu um erro durante a conexão com o banco de dados: %s", str(e))
-        flag = False
+            return True
     except Exception as e:
         log.error("Ocorreu um erro durante a execução a carga: %s", str(e))
-        flag = False
-    return flag
+        return False
 
 
 def upsert_dw():
@@ -196,6 +191,7 @@ def upsert_dw():
             log.info("Procedures executadas com sucesso")
         except pg.Error as e:
             log.error(f"Erro ao executar a procedure: {e}")
+
 
 def etl(hours: int):
     # Extrai tracks recentes
@@ -211,11 +207,11 @@ def etl(hours: int):
     album_batch = [unique_albums[i:i + 20] for i in range(0, len(unique_albums), 20)]
 
     # Extração de dados referentes a cada dimensão, utilizando o endpoint específico
-    log.info("Calling get_artist_data...")
+    log.info("Getting artists data...")
     artists_data = get_artists_data(unique_artists)
-    log.info("Calling get_album_data...")
+    log.info("Getting albums data...")
     albums_data = pd.concat([get_albums_data(album) for album in album_batch])
-    log.info("Calling get_track_data...")
+    log.info("Getting tracks data...")
     tracks_data = get_tracks_data(unique_tracks)
     tracks_features_data = get_tracks_features(unique_tracks)
 
@@ -238,5 +234,5 @@ if __name__ == '__main__':
         datefmt='%Y-%m-%d %H:%M:%S',
         handlers=[log.FileHandler('etl_logs.log')]
     )
-    backward_hours = int(argv[1]) if len(argv) > 1 else 3
+    backward_hours = int(argv[1]) if len(argv) > 1 else 24
     etl(backward_hours)
