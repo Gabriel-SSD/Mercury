@@ -232,7 +232,7 @@ if __name__ == '__main__':
         level=log.INFO,
         format='%(asctime)s.%(msecs)03d - %(levelname)s: %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S',
-        handlers=[log.FileHandler('logs/etl.log')]
+        handlers=[log.FileHandler('etl.log')]
     )
-    backward_hours = int(argv[1]) if len(argv) > 1 else 1
+    backward_hours = int(argv[1]) if len(argv) > 1 else 24
     etl(backward_hours)
