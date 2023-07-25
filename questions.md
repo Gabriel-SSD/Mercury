@@ -1,3 +1,4 @@
+# Questions for Metabase
 **Consultas Básicas:**
 
 1. Qual é o número total de registros na tabela fato?
@@ -80,9 +81,7 @@
 
 61. Quantos seguidores têm os artistas cujas músicas foram escutadas nas noites de sextas-feiras?
 62. Qual é a média de popularidade das músicas de cada álbum lançado no último ano?
-63. Quantas
-
- músicas diferentes foram escutadas em cada mês por tipo de artista?
+63. Quantas músicas diferentes foram escutadas em cada mês por tipo de artista?
 64. Quantos minutos de música foram escutados em cada hora do dia no último mês?
 65. Quantas músicas explícitas foram escutadas nos dias úteis (workdays) do último mês?
 66. Qual é o número total de seguidores para cada tipo de artista cujas músicas foram escutadas nos dias úteis (workdays)?
@@ -156,9 +155,7 @@
 119. Quais são as músicas que foram lançadas no último dia do trimestre?
 120. Quantas músicas foram lançadas em cada semana do último trimestre?
 
-**Consultas com
-
- Funções de Agregação Condicionais (CASE WHEN):**
+**Consultas com Funções de Agregação Condicionais (CASE WHEN):**
 
 121. Quantos minutos de música foram escutados nos dias úteis (workdays) do último mês?
 122. Qual é o total de segundos de música escutados nas tardes dos dias úteis (workdays)?
