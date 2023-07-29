@@ -1,9 +1,9 @@
 CREATE OR REPLACE PROCEDURE dw.update_dim_tempo()
-	LANGUAGE plpgsql
+ LANGUAGE plpgsql
 AS $procedure$
 	begin
 		-- Insert dim_hora
-		INSERT INTO dw.dim_hora (sk_hora, hora, periodo)
+		INSERT INTO dbo.dim_hora (sk_hora, hora, periodo)
 		SELECT
 		    CAST(REPLACE(sdh.hora, ':00', '') AS INTEGER),
 		    CAST(REPLACE(sdh.hora, ':00', '') AS INTEGER),
@@ -36,3 +36,8 @@ AS $procedure$
 	END;
 $procedure$
 ;
+
+-- Permissions
+
+ALTER PROCEDURE dw.update_dim_tempo() OWNER TO "MercuryDBA";
+GRANT ALL ON PROCEDURE dw.update_dim_tempo() TO "MercuryDBA";

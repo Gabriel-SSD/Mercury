@@ -29,3 +29,10 @@ end;
 
 $procedure$
 ;
+
+-- Permissions
+
+ALTER PROCEDURE dw.insert_fato() OWNER TO "MercuryDBA";
+GRANT ALL ON PROCEDURE dw.insert_fato() TO public;
+GRANT ALL ON PROCEDURE dw.insert_fato() TO "MercuryDBA";
+GRANT ALL ON PROCEDURE dw.insert_fato() TO "PyCharm";
