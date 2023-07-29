@@ -1,7 +1,92 @@
---DROP TABLE dbo.dim_artist;
+-- DROP ROLE "MercuryDBA";
+
+CREATE ROLE "MercuryDBA" WITH
+	SUPERUSER
+	CREATEDB
+	CREATEROLE
+	INHERIT
+	LOGIN
+	REPLICATION
+	BYPASSRLS
+	CONNECTION LIMIT -1;
+
+-- DROP ROLE "Metabase";
+
+CREATE ROLE "Metabase" WITH
+	NOSUPERUSER
+	NOCREATEDB
+	NOCREATEROLE
+	NOINHERIT
+	LOGIN
+	NOREPLICATION
+	NOBYPASSRLS
+	CONNECTION LIMIT -1;
+
+-- DROP ROLE "PyCharm";
+
+CREATE ROLE "PyCharm" WITH
+	NOSUPERUSER
+	NOCREATEDB
+	NOCREATEROLE
+	NOINHERIT
+	LOGIN
+	NOREPLICATION
+	NOBYPASSRLS
+	CONNECTION LIMIT -1;
+
+COMMENT ON ROLE "PyCharm" IS 'Usuário para acessar via PyCharm';
+-- DROP SCHEMA dw;
+
+CREATE SCHEMA dw AUTHORIZATION "MercuryDBA";
+
+-- Permissions
+
+GRANT ALL ON SCHEMA dw TO "MercuryDBA";
+GRANT USAGE ON SCHEMA dw TO "PyCharm";
+GRANT USAGE ON SCHEMA dw TO "Metabase";
+
+-- DROP TABLE dw.dim_data;
+
+CREATE TABLE dw.dim_data (
+	sk_data int4 NOT NULL,
+	"data" date NULL,
+	"year" int2 NULL,
+	"month" int2 NULL,
+	"day" int2 NULL,
+	weekday text NULL,
+	workday bool NULL,
+	holiday bool NULL,
+	holiday_name text NULL,
+	CONSTRAINT dim_data_pkey PRIMARY KEY (sk_data)
+);
+
+-- Permissions
+
+ALTER TABLE dw.dim_data OWNER TO "MercuryDBA";
+GRANT ALL ON TABLE dw.dim_data TO "MercuryDBA";
+GRANT INSERT, REFERENCES, SELECT, UPDATE ON TABLE dw.dim_data TO "PyCharm";
+GRANT SELECT ON TABLE dw.dim_data TO "Metabase";
+
+-- DROP TABLE dw.dim_hora;
+
+CREATE TABLE dw.dim_hora (
+	sk_hora int2 NOT NULL,
+	hora int2 NULL,
+	periodo text NULL,
+	CONSTRAINT pk_hora PRIMARY KEY (sk_hora)
+);
+
+-- Permissions
+
+ALTER TABLE dw.dim_hora OWNER TO "MercuryDBA";
+GRANT ALL ON TABLE dw.dim_hora TO "MercuryDBA";
+GRANT INSERT, REFERENCES, SELECT, UPDATE ON TABLE dw.dim_hora TO "PyCharm";
+GRANT SELECT ON TABLE dw.dim_hora TO "Metabase";
+
+-- DROP TABLE dw.dim_artist;
 
 CREATE TABLE dw.dim_artist (
-	sk_artist SERIAL not NULL,
+	sk_artist serial4 NOT NULL,
 	id text NULL,
 	"name" text NULL,
 	"type" text NULL,
@@ -13,17 +98,25 @@ CREATE TABLE dw.dim_artist (
 	CONSTRAINT dim_artist_un UNIQUE (id)
 );
 
+-- Permissions
+
+ALTER TABLE dw.dim_artist OWNER TO "MercuryDBA";
+GRANT ALL ON TABLE dw.dim_artist TO "MercuryDBA";
+GRANT INSERT, REFERENCES, SELECT, UPDATE ON TABLE dw.dim_artist TO "PyCharm";
+GRANT SELECT ON TABLE dw.dim_artist TO "Metabase";
+
 
 --DROP TABLE dbo.dim_album;
 
 CREATE TABLE dw.dim_album (
-	sk_album SERIAL not NULL,
+	sk_album serial4 NOT NULL,
 	id text NULL,
 	"name" text NULL,
 	"type" text NULL,
 	popularity int2 NULL,
 	album_type text NULL,
 	release_date text NULL,
+	release_year int2 NULL,
 	"label" text NULL,
 	total_tracks int2 NULL,
 	data_carga date NULL,
@@ -32,20 +125,25 @@ CREATE TABLE dw.dim_album (
 	CONSTRAINT dim_album_un UNIQUE (id)
 );
 
+-- Permissions
 
+ALTER TABLE dw.dim_album OWNER TO "MercuryDBA";
+GRANT ALL ON TABLE dw.dim_album TO "MercuryDBA";
+GRANT INSERT, REFERENCES, SELECT, UPDATE ON TABLE dw.dim_album TO "PyCharm";
+GRANT SELECT ON TABLE dw.dim_album TO "Metabase";
 
---DROP TABLE dbo.dim_track;
+-- DROP TABLE dw.dim_track;
 
-CREATE TABLE dbo.dim_track (
-	sk_track BIGSERIAL NOT NULL,
+CREATE TABLE dw.dim_track (
+	sk_track serial4 NOT NULL,
 	id text NULL,
 	"name" text NULL,
 	"type" text NULL,
-	popularity int4 NULL,
+	popularity int2 NULL,
 	is_local bool NULL,
 	explicit bool NULL,
 	duration_ms int4 NULL,
-	track_number int4 NULL,
+	track_number int2 NULL,
 	data_carga date NULL,
 	data_atualizacao date NULL,
 	acousticness float8 NULL,
@@ -62,6 +160,13 @@ CREATE TABLE dbo.dim_track (
 	CONSTRAINT dim_track_sk PRIMARY KEY (sk_track),
 	CONSTRAINT dim_track_un UNIQUE (id)
 );
+
+-- Permissions
+
+ALTER TABLE dw.dim_track OWNER TO "MercuryDBA";
+GRANT ALL ON TABLE dw.dim_track TO "MercuryDBA";
+GRANT INSERT, REFERENCES, SELECT, UPDATE ON TABLE dw.dim_track TO "PyCharm";
+GRANT SELECT ON TABLE dw.dim_track TO "Metabase";
 
 -- DROP TABLE dw.fato;
 
@@ -80,3 +185,10 @@ CREATE TABLE dw.fato (
 	CONSTRAINT fk_fato_dim_hora FOREIGN KEY (sk_hora) REFERENCES dw.dim_hora(sk_hora) ON UPDATE CASCADE,
 	CONSTRAINT fk_fato_dim_track FOREIGN KEY (sk_track) REFERENCES dw.dim_track(sk_track) ON UPDATE CASCADE
 );
+
+-- Permissions
+
+ALTER TABLE dw.fato OWNER TO "MercuryDBA";
+GRANT ALL ON TABLE dw.fato TO "MercuryDBA";
+GRANT INSERT, REFERENCES, SELECT, UPDATE ON TABLE dw.fato TO "PyCharm";
+GRANT SELECT ON TABLE dw.fato TO "Metabase";
