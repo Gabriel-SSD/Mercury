@@ -11,7 +11,7 @@ services:
     environment:
       POSTGRES_USER: MercuryDBA
       POSTGRES_DB: MercuryDW
-      POSTGRES_PASSWORD: mercury
+      POSTGRES_PASSWORD: password
     volumes:
       - pg_data:/var/lib/postgresql/data
     networks:
@@ -26,7 +26,7 @@ services:
     environment:
       POSTGRES_USER: MercuryDBA
       POSTGRES_DB: MetabaseDB
-      POSTGRES_PASSWORD: metabase
+      POSTGRES_PASSWORD: password
     volumes:
       - pg_metabase_data:/var/lib/postgresql/data
     networks:
@@ -39,11 +39,11 @@ services:
     container_name: metabase
     environment:
       MB_DB_TYPE: postgres
-      MB_DB_DBNAME: MetabaseDB   # Nome do banco de dados para o Metabase
-      MB_DB_PORT: 5432   # Usando a porta padrão do PostgreSQL para o Metabase
+      MB_DB_DBNAME: MetabaseDB
+      MB_DB_PORT: 5432
       MB_DB_USER: MercuryDBA
-      MB_DB_PASS: metabase
-      MB_DB_HOST: pg_metabase   # Apontando para o serviço do PostgreSQL do Metabase
+      MB_DB_PASS: password
+      MB_DB_HOST: pg_metabase
     volumes:
       - metabase_data:/metabase-data
     networks:
@@ -52,9 +52,9 @@ services:
       - 3030:3000
 
 volumes:
-  pg_data:   # Volume para o PostgreSQL (principal)
-  pg_metabase_data:   # Volume para o PostgreSQL do Metabase
-  metabase_data:   # Volume para o Metabase
+  pg_data:
+  pg_metabase_data:
+  metabase_data:
 
 networks:
   mercury_net:
