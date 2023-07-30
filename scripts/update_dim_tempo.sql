@@ -3,7 +3,7 @@ CREATE OR REPLACE PROCEDURE dw.update_dim_tempo()
 AS $procedure$
 	begin
 		-- Insert dim_hora
-		INSERT INTO dbo.dim_hora (sk_hora, hora, periodo)
+		INSERT INTO dw.dim_hora (sk_hora, hora, periodo)
 		SELECT
 		    CAST(REPLACE(sdh.hora, ':00', '') AS INTEGER),
 		    CAST(REPLACE(sdh.hora, ':00', '') AS INTEGER),
@@ -12,7 +12,7 @@ AS $procedure$
 		ON CONFLICT DO NOTHING;
 
 		-- Insert dim_data
-		INSERT INTO dw.dim_data (sk_data, "date", "year", "month", "day", weekday, workday, holiday, holiday_name)
+		INSERT INTO dw.dim_data (sk_data, "data", "year", "month", "day", weekday, workday, holiday, holiday_name)
 		SELECT
 		    CAST(to_char(sdt."date"::timestamp, 'yyyymmdd') AS INTEGER),
 		    sdt."date"::date,
@@ -36,8 +36,3 @@ AS $procedure$
 	END;
 $procedure$
 ;
-
--- Permissions
-
-ALTER PROCEDURE dw.update_dim_tempo() OWNER TO "MercuryDBA";
-GRANT ALL ON PROCEDURE dw.update_dim_tempo() TO "MercuryDBA";

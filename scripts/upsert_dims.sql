@@ -74,10 +74,3 @@ BEGIN
 END;
 $procedure$
 ;
-
--- Permissions
-
-ALTER PROCEDURE dw.upsert_dims() OWNER TO "MercuryDBA";
-GRANT ALL ON PROCEDURE dw.upsert_dims() TO public;
-GRANT ALL ON PROCEDURE dw.upsert_dims() TO "MercuryDBA";
-GRANT ALL ON PROCEDURE dw.upsert_dims() TO "PyCharm";

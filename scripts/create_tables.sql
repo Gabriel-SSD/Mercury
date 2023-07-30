@@ -185,10 +185,3 @@ CREATE TABLE dw.fato (
 	CONSTRAINT fk_fato_dim_hora FOREIGN KEY (sk_hora) REFERENCES dw.dim_hora(sk_hora) ON UPDATE CASCADE,
 	CONSTRAINT fk_fato_dim_track FOREIGN KEY (sk_track) REFERENCES dw.dim_track(sk_track) ON UPDATE CASCADE
 );
-
--- Permissions
-
-ALTER TABLE dw.fato OWNER TO "MercuryDBA";
-GRANT ALL ON TABLE dw.fato TO "MercuryDBA";
-GRANT INSERT, REFERENCES, SELECT, UPDATE ON TABLE dw.fato TO "PyCharm";
-GRANT SELECT ON TABLE dw.fato TO "Metabase";
