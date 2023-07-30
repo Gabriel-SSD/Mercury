@@ -6,9 +6,9 @@ import psycopg2 as pg
 from sqlalchemy import create_engine, MetaData
 from spotipy.oauth2 import SpotifyClientCredentials
 from spotipy.oauth2 import SpotifyOAuth
-from util import *
+from aux.util import *
 from os import getenv
-from config import load_env
+from aux.config import load_env
 
 
 def get_recent_tracks(hours: int):
@@ -232,7 +232,7 @@ if __name__ == '__main__':
         level=log.INFO,
         format='%(asctime)s.%(msecs)03d - %(levelname)s: %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S',
-        handlers=[log.FileHandler('etl.log')]
+        handlers=[log.FileHandler('logs/etl.log')]
     )
-    backward_hours = int(argv[1]) if len(argv) > 1 else 24
+    backward_hours = int(argv[1]) if len(argv) > 1 else 12
     etl(backward_hours)

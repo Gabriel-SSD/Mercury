@@ -4,9 +4,9 @@ import pandas as pd
 import psycopg2 as pg
 from sqlalchemy import create_engine, MetaData
 from spotipy.oauth2 import SpotifyClientCredentials
-from util import *
+from aux.util import *
 from os import getenv
-from config import load_env
+from aux.config import load_env
 import json
 
 

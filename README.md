@@ -31,5 +31,5 @@ O Mercury tem como objetivo obter insigths através dos dados disponibilizados p
 - O projeto segue o modelo star schema, com granularidade por hora, com uma tabela fato centralizada e diversas dimensões relacionadas aos fatos. Essa modelagem de dados permite consultas eficientes e análises detalhadas sobre as músicas escutadas ao longo do tempo. O star schema e a granularidade por hora ajudam a otimizar as consultas e facilitam a exploração dos dados no Metabase ou outras ferramentas de análise. 
 
 <div style="text-align: center;">
-  <img src="docs/MercuryERD.png" alt="Modelo Dimensional">
+  <img src="files/MercuryERD.png" alt="Modelo Dimensional">
 </div>
