@@ -1,169 +1,171 @@
--- Albuns escutados
+-- Questions do Metabase para o Dashboard histórico
+
+-- ALBUNS ESCUTADOS
 
 SELECT 
 	COUNT(1) 
 FROM dw.dim_album 
-where album_type = 'album';
+WHERE album_type = 'album';
 
--- Albuns mais populares
+-- ALBUNS MAIS POPULARES
 
 SELECT
-	name as album,
-	popularity as popularidade
+	name AS album,
+	popularity AS popularidade
 FROM dw.dim_album
 WHERE album_type = 'album'
 ORDER BY popularidade DESC
 LIMIT 5;
 
--- Albuns mais escutados por quantidade
+-- ALBUNS MAIS ESCUTADOS POR QUANTIDADE
 
-select
-	SUM(quantidade) as quantidade,
-	da.name as artista,
+SELECT
+	SUM(quantidade) AS quantidade,
+	da."name" AS album,
 	da.popularity
 FROM 
-dw.fato f
-join dw.dim_album da on f.sk_album = da.sk_album
-group by f.sk_album, da.name, da.popularity
-order by sum(quantidade) desc
-limit 8;
+	dw.fato f
+JOIN dw.dim_album da ON f.sk_album = da.sk_album
+GROUP BY f.sk_album, da."name", da.popularity
+ORDER BY SUM(quantidade) DESC
+LIMIT 8;
 
 
--- Albuns por ano de lançamento
-
-select 
-	count(1) as qtd,
-	substring(release_date from 1 for 4) as ano
-from dw.dim_album 
-where album_type = 'album' 
-group by substring(release_date from 1 for 4);
-
--- Artistas mais escutados por quantidade
-
-select
-	SUM(quantidade) as quantidade,
-	da.name as artista
-FROM 
-dw.fato f
-join dw.dim_artist da on f.sk_artist = da.sk_artist
-group by f.sk_artist, da.name
-order by sum(quantidade) desc
-limit 10;
-
-
--- Artistas mais populares
+-- ALBUNS POR ANO DE LANÇAMENTO
 
 SELECT 
-	name as artista,
-	popularity as popularidade
+	COUNT(1) AS qtd,
+	SUBSTRING(release_date FROM 1 FOR 4) AS ano
+FROM dw.dim_album 
+WHERE album_type = 'album' 
+GROUP BY SUBSTRING(release_date FROM 1 FOR 4);
+
+-- ARTISTAS MAIS ESCUTADOS POR QUANTIDADE
+
+SELECT
+	SUM(quantidade) AS quantidade,
+	da.name AS artista
+FROM 
+	dw.fato f
+JOIN dw.dim_artist da ON f.sk_artist = da.sk_artist
+GROUP BY f.sk_artist, da.name
+ORDER BY SUM(quantidade) DESC
+LIMIT 10;
+
+
+-- ARTISTAS MAIS POPULARES
+
+SELECT 
+	"name" AS artista,
+	popularity AS popularidade
 FROM dw.dim_artist
-ORDER BY popularity desc
+ORDER BY popularity DESC
 LIMIT 7;
 
 
--- Duração média das músicas
+-- DURAÇÃO MÉDIA DAS MÚSICAS
 
 SELECT 
 	AVG(duration_ms) / 60000
 FROM dw.dim_track;
 
 
--- Faixas escutadas por artista e popularidade
-
-select
-	SUM(quantidade) as quantidade,
-	da.name as artista,
-	da.followers as seguidores
+-- FAIXAS ESCUTADAS POR ARTISTA E SEGUIDORES
+SELECT
+	SUM(quantidade) AS quantidade,
+	da."name" AS artista,
+	da.followers AS seguidores
 FROM dw.fato f
-join dw.dim_artist da on f.sk_artist = da.sk_artist
-group by f.sk_artist, da.name, da.followers
-order by sum(quantidade) desc
-limit 8;
+JOIN dw.dim_artist da ON f.sk_artist = da.sk_artist
+GROUP BY f.sk_artist, da."name", da.followers
+ORDER BY SUM(quantidade) DESC
+LIMIT 8;
 
 
--- Minutos escutados no total
 
-select 
-	(SUM(quantidade * duration_ms) /60000)
-from
+-- MINUTOS ESCUTADOS NO TOTAL
+
+SELECT 
+	(SUM(quantidade * duration_ms) / 60000)
+FROM
 (
-    select
+    SELECT
 	    f.quantidade,
 	    dt.duration_ms
-    from dw.fato f
-    join dw.dim_track dt on f.sk_track = dt.sk_track
-    order by quantidade desc
-) as subquery;
+    FROM dw.fato f
+    JOIN dw.dim_track dt ON f.sk_track = dt.sk_track
+    ORDER BY quantidade DESC
+) AS subquery;
 
 
--- Média de minutos escutados por dia
+-- MÉDIA DE MINUTOS ESCUTADOS POR DIA
 
-select 
-	sum(minutos_escutados) / count(minutos_escutados) as media_minutos
-from (
+SELECT 
+	SUM(minutos_escutados) / COUNT(minutos_escutados) AS media_minutos
+FROM (
 	SELECT
 		SUM(f.quantidade * (dt.duration_ms / 60000)) AS minutos_escutados
 	FROM dw.fato f
 	JOIN dw.dim_track dt ON f.sk_track = dt.sk_track
 	JOIN dw.dim_data dd ON f.sk_data = dd.sk_data
 	GROUP BY dd.data
-) as subquery;
+) AS subquery;
 
--- Média de popularidade dos artistas
+-- MÉDIA DE POPULARIDADE DOS ARTISTAS
 
 SELECT 
 	AVG(popularity)
 FROM dw.dim_artist;
 
 
--- Músicas diferentes por artista
+-- MÚSICAS DIFERENTES POR ARTISTA
 
-
-select 
-    count(1) as qtd,
-    da.name
-from 
+SELECT 
+	COUNT(1) AS qtd,
+	da."name"
+FROM 
 (
-    select distinct
+    SELECT DISTINCT
     	sk_track,
     	sk_artist 
-    from dw.fato 
-    group by sk_artist, sk_track
-    order by sk_artist
-) as subquery
-join dw.dim_artist da on subquery.sk_artist = da.sk_artist 
-group by subquery.sk_artist, da.name
-order by qtd desc
-limit 5;
+    FROM dw.fato 
+    GROUP BY sk_artist, sk_track
+    ORDER BY sk_artist
+) AS subquery
+JOIN dw.dim_artist da ON subquery.sk_artist = da.sk_artist 
+GROUP BY subquery.sk_artist, da."name"
+ORDER BY qtd DESC
+LIMIT 5;
 
 
--- Músicas distintas
+-- MÚSICAS DISTINTAS
 
 SELECT 
 	COUNT(sk_track)
 FROM dw.dim_track;
 
 
--- Músicas distintas por mês
+-- MÚSICAS DISTINTAS POR MÊS
+
 SELECT 
-	COUNT(sk_track) as musicasdiferentes,
-	month as mês
+	COUNT(sk_track) AS musicasdiferentes,
+	MONTH AS mês
 FROM 
 (
-    SELECT distinct 
+    SELECT DISTINCT 
     	sk_track,
     	dd.month
-    from dw.fato f
-    JOIN dw.dim_data dd on dd.sk_data = f.sk_data 
+    FROM dw.fato f
+    JOIN dw.dim_data dd ON dd.sk_data = f.sk_data 
     GROUP BY dd.month, f.sk_track
-) as subquery
-GROUP BY month;
+) AS subquery
+GROUP BY MONTH;
 
 
--- Músicas escutadas por dia da semana
+-- MÚSICAS ESCUTADAS POR DIA DA SEMANA
 
 SELECT
-	SUM(f.quantidade) as musicas,
+	SUM(f.quantidade) AS musicas,
 	d.weekday
 FROM dw.fato f
 JOIN dw.dim_data d ON f.sk_data = d.sk_data
@@ -171,33 +173,36 @@ GROUP BY d.weekday
 ORDER BY musicas DESC;
 
 
--- Músicas escutadas por hora
-select
-	SUM(f.quantidade) as musicas,
+-- MÚSICAS ESCUTADAS POR HORA
+
+SELECT
+	SUM(f.quantidade) AS musicas,
 	dh.hora
-from dw.fato f
-join dw.dim_hora dh ON f.sk_hora = dh.sk_hora
+FROM dw.fato f
+JOIN dw.dim_hora dh ON f.sk_hora = dh.sk_hora
 GROUP BY dh.hora;
 
--- Músicas explicitas
+-- MÚSICAS EXPLICITAS
+
 SELECT COUNT(1),
-case
-	when explicit = true then 'explicito'
-	when explicit = false then 'não explicito'
-	else 'ND'
-end
+CASE
+	WHEN explicit = TRUE THEN 'explicito'
+	WHEN explicit = FALSE THEN 'não explicito'
+	ELSE 'ND'
+END
 FROM dw.dim_track
 GROUP BY explicit;
 
--- Popularidade do album por tipo
+-- POPULARIDADE DO ALBUM POR TIPO
 
-select 
-    avg(popularity) popularidade,
-    album_type as tipo
-from dw.dim_album 
-group by album_type;
+SELECT 
+	AVG(popularity) AS popularidade,
+	album_type AS tipo
+FROM dw.dim_album 
+GROUP BY album_type;
 
--- Total de músicas escutadas
+-- TOTAL DE MÚSICAS ESCUTADAS
+
 SELECT 
 	SUM(quantidade)
-FROM dw.fato
+FROM dw.fato;
