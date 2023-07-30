@@ -19,11 +19,11 @@ O Mercury tem como objetivo obter insigths através dos dados disponibilizados p
 
 ## ETL:
 1. Extração de dados em lotes consumindo a API do Spotify, obtendo dados referentes às ultimas músicas escutadas em determinado período, a partir desse retorno são obtidos os ids de: track, album, artista e o timestamp da escuta.
-2. A partir dos ids, são filtrados apenas os ids únicos, para reduzir chamadas aos endpoints na etapa 4
-3. Dependendo do volume de dados, é necessário separar em lotes, pois a API possui limitações de ids por chamada
-4. Com os ids únicos, realizam-se consultas nos respectivos endpoints para obter os dados relacionados aos artistas, tracks e album
-5. Os dados iniciais da primeira extração correspondem a tabela fato, as consultas derivadas dos ids correspondem a dimensões, todos os dataframes são gravados na stage para tratamento
-6. Dentro da stage, são executadas stored procedures que tratam os dados, lidam com inconsistências da fonte e padronizam para serem gravados (upsert) dentro do Data Warehouse
+2. A partir dos ids, são filtrados apenas os ids únicos, para reduzir chamadas aos endpoints na etapa 4.
+3. Dependendo do volume de dados, é necessário separar em lotes, pois a API possui limitações de ids por chamada.
+4. Com os ids únicos, realizam-se consultas nos respectivos endpoints para obter os dados relacionados aos artistas, tracks e album.
+5. Os dados iniciais da primeira extração correspondem a tabela fato, as consultas derivadas da etapa anterior correspondem a dimensões, todos os dataframes são gravados na stage para tratamento.
+6. Dentro da stage, são executadas stored procedures que tratam os dados, lidam com inconsistências da fonte e padronizam para serem gravados (upsert) dentro do Data Warehouse.
 7. Após o processo os dados se encontram limpos, organizados e estruturados no Data Warehouse disponível para utilização no Metabase
 
 ## Modelagem de dados:
