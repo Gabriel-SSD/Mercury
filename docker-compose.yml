@@ -1,0 +1,61 @@
+# 1. pg_dw = Stores data from ETL
+# 2. pg_metabase = DB for metabase
+# 3. metabase container
+
+version: '3.9'
+services:
+  pg_dw:
+    image: postgres:latest
+    container_name: pg_dw
+    hostname: pg_dw
+    environment:
+      POSTGRES_USER: MercuryDBA
+      POSTGRES_DB: MercuryDW
+      POSTGRES_PASSWORD: mercury
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - mercury_net
+    ports:
+      - 5433:5432
+
+  pg_metabase:
+    image: postgres:latest
+    container_name: pg_metabase
+    hostname: pg_metabase
+    environment:
+      POSTGRES_USER: MercuryDBA
+      POSTGRES_DB: MetabaseDB
+      POSTGRES_PASSWORD: metabase
+    volumes:
+      - pg_metabase_data:/var/lib/postgresql/data
+    networks:
+      - mercury_net
+    ports:
+      - 5434:5432
+
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: MetabaseDB   # Nome do banco de dados para o Metabase
+      MB_DB_PORT: 5432   # Usando a porta padrão do PostgreSQL para o Metabase
+      MB_DB_USER: MercuryDBA
+      MB_DB_PASS: metabase
+      MB_DB_HOST: pg_metabase   # Apontando para o serviço do PostgreSQL do Metabase
+    volumes:
+      - metabase_data:/metabase-data
+    networks:
+      - mercury_net
+    ports:
+      - 3030:3000
+
+volumes:
+  pg_data:   # Volume para o PostgreSQL (principal)
+  pg_metabase_data:   # Volume para o PostgreSQL do Metabase
+  metabase_data:   # Volume para o Metabase
+
+networks:
+  mercury_net:
+    driver: bridge
