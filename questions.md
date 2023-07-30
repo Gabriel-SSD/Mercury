@@ -1,3 +1,4 @@
+[//]: # (Perguntas de base para criar dashboards)
 # Questions for Metabase
 **Consultas Básicas:**
 
