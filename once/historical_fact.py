@@ -9,6 +9,9 @@ from os import getenv
 from aux.config import load_env
 import json
 
+# Código replicado do etl.py com modificações para ler de json que possui dados históricos.
+# Após isso são feitos os mesmos procedimentos para criar dimensões e fato
+
 
 def historical_tracks():
     with open("../history/Streaming_History_Audio_2021-2023_0.json") as file:

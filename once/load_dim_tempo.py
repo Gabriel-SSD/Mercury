@@ -3,6 +3,10 @@ import holidays
 
 
 def load_dim_hora():
+    """
+    Gera a dim_hora, um DataFrame com os horários e o nome do período
+    :return: DataFrame
+    """
     horas = pd.date_range(start='00:00', end='23:00', freq='H').strftime('%H:%M')
     dim_hora = pd.DataFrame({'hora': horas,
                              'periodo':
@@ -15,6 +19,10 @@ def load_dim_hora():
 
 # 2023-07-11 data inicial
 def load_dim_data():
+    """
+    Gera a dim_data, um DataFrame com todos os dia, mês, ano, dia útil, não útil, feriado e nome do feriado.
+    :return: DataFrame
+    """
     datas = pd.date_range(start='2021-01-01', end='2021-12-31')
     feriados = holidays.country_holidays(country='BR', state='RJ', years=2022)
     dim_data = pd.DataFrame({'date': datas,
@@ -31,6 +39,12 @@ def load_dim_data():
 
 
 def load_dim_tempo_stage(dim_data, dim_hora):
+    """
+    Realiza a carga no Stage das dimensões criadas
+    :param dim_data: DataFrame
+    :param dim_hora: DataFrame
+    :return: None
+    """
     metadata = MetaData(schema="stage")
     with pg.connect(host=getenv('HOST'), dbname=getenv('DB'), user=getenv('USER'), password=getenv('PW')) as conn:
         engine = create_engine('postgresql+psycopg2://', creator=lambda: conn)

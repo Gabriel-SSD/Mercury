@@ -20,9 +20,11 @@ def to_ms(date_str):
 
 
 def to_date(ms):
+    # Timestamp -> Datetime
     return datetime.fromtimestamp(int(ms) / 1000).strftime("%d/%m %Hh%M")
 
 
 def convert_to_datetime(date_str):
+    # Timezone -> Datetime
     dt = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
     return dt.astimezone(timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
