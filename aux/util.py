@@ -2,6 +2,8 @@ from datetime import date, datetime, timedelta
 from time import time
 from pytz import timezone
 
+# Funções que podem ser reaproveitadas em vários scripts
+
 
 def get_date():
     return date.today().strftime("%d/%m/%Y")
