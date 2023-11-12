@@ -5,7 +5,7 @@
 ![Badge API](https://img.shields.io/badge/API-Spotipy-green)
 ![Badge Status](https://img.shields.io/badge/Status-Done-G)
 ### Spotify ETL Job
-Projeto desenvolvido para praticar aprendizados do curso **Design e Modelagem de Data Warehouses** da Data Science Academy. Mais informações em /files/mercury.pdf.
+Projeto desenvolvido para praticar aprendizados do curso **Design e Modelagem de Data Warehouses** da Data Science Academy. Mais informações no [PDF](https://github.com/Gabriel-SSD/Mercury/blob/main/files/mercury.pdf)
 
 ## Sobre a ETL:
 O script principal que realiza o processo de ETL é o etl.py, ele realiza a extração de dados da fonte, filtra e chama stored procedures que realizam transformações. Todas as procedures estão em scripts, assim como os scripts de criação do BD. Além disso existem scripts adicionais em /aux, que definem configurações de variáveis de ambiente, funções compartilhadas e backup dos dados. Todos os principais scripts registram seus logs em /logs.
